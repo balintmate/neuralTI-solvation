@@ -1,0 +1,52 @@
+
+jax_config:
+  jax_enable_x64: False
+  jax_numpy_rank_promotion: 'raise'
+  jax_debug_nans: True
+
+wandb_project_name: LJ-solute
+PRNGKey: 0
+cuda_devices: '0'
+
+
+data0: LJ3Dwithsolute_0.00
+data1: LJ3Dwithsolute_1.00
+
+
+target_system:
+  _target_: data.target_systems.LJ3D_with_solute
+
+model:
+  _target_: stochastic_interpolant.stochastic_interpolant
+  target_system: ${target_system}
+  loss_x_weight: "lambda t: 1e-3 * jnp.exp(10*t*(t-1))"
+  loss_t_weight: 1e-8
+
+U_model:
+  _target_: U_GNN.U_model
+  target_system: ${target_system}
+  NN: [64, 64]
+  cutoff:  0.222 #2/9
+  size_to_pad:  15000
+  num_features:  48
+  num_vec_features:  16
+  agg_norm:  10
+  num_layers: 3
+
+
+
+num_train_steps: 50000
+ckpt_every_n_step: 500
+new_batch_every_n_step: 20
+batch_size: 24
+
+optim:
+  _target_: optax.adam
+  learning_rate:
+    _target_: optax.exponential_decay
+    init_value: 1e-3
+    decay_rate: 1e-1 
+    transition_steps: 10000
+    end_value: 1e-5
+
+

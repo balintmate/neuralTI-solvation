@@ -1,0 +1,9 @@
+data/LJ3Dwithsolute_*
+*__pycache__/*
+experiments/outputs/*
+experiments/wandb/*
+experiments/wandb.key
+*.pyc
+.pip_cache/*
+experiments/dUdt_hist
+experiments/LJsolute.model
